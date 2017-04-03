@@ -3,6 +3,7 @@ namespace controllers\internals;
 
 use OwlyCode\StreamingBird\StreamReader;
 use OwlyCode\StreamingBird\StreamingBird;
+use PHPInsight\Sentiment;
 
 class TwitterBot extends \Controller
 {
@@ -14,7 +15,17 @@ class TwitterBot extends \Controller
      */
     public function searchForNewTweets()
     {
-        $termsToSearch = ['melenchon'];
+        //Create table of terms to search
+        global $candidats;
+        $termsToSearch = [];
+
+        foreach ($candidats as $candidat)
+        {
+            foreach ($candidat['keywords'] as $keywordsCoef => $keywords)
+            {
+                $termsToSearch = array_merge($termsToSearch, $keywords);
+            }
+        }
 
         //Connect to twitter streaming API and search for all intersting terms. If find one, add it to the queue
         $twitterConnection = new StreamingBird(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET, TWITTER_OAUTH_TOKEN, TWITTER_OAUTH_SECRET);
@@ -46,12 +57,14 @@ class TwitterBot extends \Controller
         //Keep only interesting data
         $tweet = [
             'id_tweet' => $tweet['id'],
-            'content' => $tweet['text'],
+            'content' => isset($tweet['extended_tweet']['full_text']) ? $tweet['extended_tweet']['full_text'] : $tweet['text'],
             'user' => $tweet['user'],
             'timestamp' => $tweet['timestamp_ms'],
+            'is_response' => isset($tweet['is_quote_status']),
+            'is_retweet' => isset($tweet['retweeted_status']),
+            'lang' => $tweet['lang'],
         ];
 
-        var_dump($tweet['id_tweet']);
         msg_send($queue, $this->queueMsgType, $tweet, true, false);
     }
 
@@ -85,8 +98,65 @@ class TwitterBot extends \Controller
     private function processingTweet($tweet)
     {
         global $candidats;
-        echo 'Resultat : ';
-        var_dump(TextAnalysis::whoIsAbout($candidats, $tweet['content']));
+
+        //If tweet is a retweet, we dont care
+        if ($tweet['is_retweet'])
+        {
+            return false;
+        }
+
+        //If tweet is not in french, we dont care
+        if ($tweet['lang'] != 'fr')
+        {
+            return false;
+        }
+
+        //Searching who the tweet is about
+        $whoIsAbout = TextAnalysis::whoIsAbout($candidats, $tweet['content']);
+
+        //If we dont know, we dont care
+        if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
+        {
+            return false;
+        }
+
+        reset($whoIsAbout);
+
+        //Analysing tweet sentiment
+        $sentimentAnalyser = new Sentiment(false, 'fr');
+        $sentimentScore = $sentimentAnalyser->score($tweet['content']);
+        $mainSentiment = $sentimentAnalyser->categorise($tweet['content']);
+
+        //Who the author is for ?
+        $whoAuthorIsFor = TextAnalysis::whoIsAbout($candidats, $tweet['user']['description']);
+
+        //If author dont have any politics in his description, he is not politic
+        $isAuthorPolitic = !($whoAuthorIsFor[array_keys($whoAuthorIsFor)[0]] == 0);
+
+        $now = new \DateTime();
+        $now = $now->format('Y-m-d H:i:s');
+
+        //Create tweet array to insert
+        $tweetToInsert = [
+            'id_tweet' => $tweet['id_tweet'],
+            'content' => $tweet['content'],
+            'nb_like' => 0,
+            'nb_view' => 0,
+            'author_description' => $tweet['user']['description'],
+            'author_certified' => $tweet['user']['verified'],
+            'author_nb_followers' => $tweet['user']['followers_count'],
+            'author_is_politic' => $isAuthorPolitic,
+            'candidat' => key($whoIsAbout),
+            'main_sentiment' => $mainSentiment,
+            'main_sentiment_value' => $sentimentScore[$mainSentiment],
+            'sentiments_value' => serialize($sentimentScore),
+            'last_update' => $now,
+            'at' => $now,
+        ];
+
+        global $bdd;
+        $model = new \Model($bdd);
+        return $model->insertIntoTable('tweet', $tweetToInsert);
     }
 
 }

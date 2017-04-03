@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS tweet
     content VARCHAR(150) NOT NULL,
     nb_like INT(11) NOT NULL,
     nb_view INT(11) NOT NULL,
+    author_description VARCHAR(500) NOT NULL,
     author_certified BOOLEAN NOT NULL,
     author_nb_followers INT(11) NOT NULL,
     author_is_politic BOOLEAN NOT NULL,

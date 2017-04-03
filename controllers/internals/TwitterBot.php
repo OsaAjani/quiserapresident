@@ -60,11 +60,12 @@ class TwitterBot extends \Controller
             'content' => isset($tweet['extended_tweet']['full_text']) ? $tweet['extended_tweet']['full_text'] : $tweet['text'],
             'user' => $tweet['user'],
             'timestamp' => $tweet['timestamp_ms'],
-            'is_response' => isset($tweet['is_quote_status']),
+            'is_response' => $tweet['is_quote_status'],
             'is_retweet' => isset($tweet['retweeted_status']),
             'lang' => $tweet['lang'],
         ];
 
+        echo "Add tweet : " . $tweet['id_tweet'] . " to queue.\n";
         msg_send($queue, $this->queueMsgType, $tweet, true, false);
     }
 
@@ -83,7 +84,14 @@ class TwitterBot extends \Controller
         while (msg_receive($queue, $this->queueMsgType, $thisMsgType, 409600, $tweet))
         {
             //Ask for processing the tweet
-            $this->processingTweet($tweet);
+            if ($this->processingTweet($tweet))
+            {
+                echo "...insert.\n";
+            }
+            else
+            {
+                echo "...ignore.\n";
+            }
 
             //Reset the msgType and tweet content
             $thisMsgType = NULL;
@@ -98,6 +106,8 @@ class TwitterBot extends \Controller
     private function processingTweet($tweet)
     {
         global $candidats;
+
+        echo "Processing tweet : " . $tweet['id_tweet'];
 
         //If tweet is a retweet, or a response we dont care
         if ($tweet['is_retweet'] || $tweet['is_response'])

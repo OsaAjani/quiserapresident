@@ -21,7 +21,6 @@ class TwitterBot extends \Controller
         $twitterConnection->createStreamReader(StreamReader::METHOD_FILTER)->setTrack($termsToSearch)->consume(
             function ($tweet)
             {
-                //var_dump($tweet);
                 $this->addTweetToQueue($tweet);
             }
         );
@@ -85,7 +84,9 @@ class TwitterBot extends \Controller
      */
     private function processingTweet($tweet)
     {
-        var_dump($tweet);
+        global $candidats;
+        echo 'Resultat : ';
+        var_dump(TextAnalysis::whoIsAbout($candidats, $tweet['content']));
     }
 
 }

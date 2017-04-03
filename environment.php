@@ -114,8 +114,6 @@
                     '#lepen',
                     '#lepen2017',
                     '@MLP_officiel',
-                    'l\'autre nazi',
-                    'la chienne de burenhal',
                 ],
                 '0.5' => [
                     'Front National',
@@ -211,6 +209,7 @@
                     '#FrancoisFillon2017',
                     '#FrançoisFillon2017',
                     '@FrancoisFillon',
+                ],
                 '0.5' => [
                     'Les Républicains',
                     '#LR',
@@ -220,7 +219,6 @@
                     'Candidat de Les Républicains',
                     'Candidat Les Républicains',
                     'Candidat LR',
-                ],
                 ],
             ],
             'accounts' => [

@@ -99,8 +99,8 @@ class TwitterBot extends \Controller
     {
         global $candidats;
 
-        //If tweet is a retweet, we dont care
-        if ($tweet['is_retweet'])
+        //If tweet is a retweet, or a response we dont care
+        if ($tweet['is_retweet'] || $tweet['is_response'])
         {
             return false;
         }

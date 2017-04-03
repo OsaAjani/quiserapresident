@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tweet
 (
     id INT NOT NULL AUTO_INCREMENT,
     id_tweet INT(11) NOT NULL,
-    content VARCHAR(150) NOT NULL,
+    content VARCHAR(500) NOT NULL,
     nb_like INT(11) NOT NULL,
     nb_view INT(11) NOT NULL,
     author_description VARCHAR(500) NOT NULL,

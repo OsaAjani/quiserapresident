@@ -1,0 +1,24 @@
+{
+    "name": "descartes/default",
+    "description": "Architecture de base d'un projet avec Descartes",
+    "require": {
+        "owlycode/streaming-bird": "^0.1.0",
+        "Misterbural/phpinsight": "*"
+    },
+    "license": "GNU/GPL3",
+    "authors": [
+        {
+            "name": "PlebWeb",
+            "email": "plebwebsas@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "url": "https://github.com/Misterbural/phpInsight.git",
+            "type": "git"
+        }
+    ],
+    "require-dev": {
+	    "phpunit/phpunit": "5.3.*"
+    }
+}

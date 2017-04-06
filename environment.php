@@ -102,7 +102,7 @@
             ],
         ],
 
-        'lepen' => [
+        'le pen' => [
             'real_name' => "Marine Le Pen",
             'keywords' => [
                 '1' => [
@@ -264,7 +264,6 @@
                 ],
                 '0.5' => [
                     'Parti Socialiste',
-                    'PS',
                     '#PartiSocialiste',
                     '#PS',
                     'Candidat du parti socialiste',

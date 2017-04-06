@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS community
     candidat VARCHAR(100) NOT NULL,
     twitter_follower INT(11) NOT NULL,
     facebook_like INT(11) NOT NULL,
-    youtube_follower INT(11) NOT NULL,
+    youtube_views INT(11) NOT NULL,
     at DATETIME NOT NULL,
     PRIMARY KEY (id)
 );

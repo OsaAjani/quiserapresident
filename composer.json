@@ -4,7 +4,10 @@
     "require": {
         "owlycode/streaming-bird": "^0.1.0",
         "Misterbural/phpinsight": "*",
-        "sunra/php-simple-html-dom-parser": "1.5.2"
+        "sunra/php-simple-html-dom-parser": "1.5.2",
+        "abraham/twitteroauth": "^0.7.2",
+        "facebook/graph-sdk": "^5.4",
+        "madcoda/php-youtube-api": "^1.2"
     },
     "license": "GNU/GPL3",
     "authors": [

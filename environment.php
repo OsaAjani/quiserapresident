@@ -36,6 +36,13 @@
             'TWITTER_CONSUMER_SECRET' => 'e3SmsqlIfx6Cu7egIZwogGJRa8DkS9oMlu6efEr2sy0Lrv4kSL',
             'TWITTER_OAUTH_TOKEN' => '848614492422451201-IV52SNG9UxAvAkIB8mQOE1rzTbk9CuI',
             'TWITTER_OAUTH_SECRET' => 'GutB6U0SFZhMyLJ4QH2xR7Kre5lkzOaLx7luT7QGc48fy',
+
+            //Facebook credentials
+            'FACEBOOK_APP_ID' => '1290641054305625',
+            'FACEBOOK_APP_SECRET' => '7f682bd24817e8528b731bf07ff8e42b',
+
+            //Youtube credentials
+            'YOUTUBE_KEY' => 'AIzaSyCywCB51pGCMJJe-XQA1m4ql4Z-qDIKGk0',
 		],
 		'test' => [
 			//Si vrai, on active le cache
@@ -88,15 +95,15 @@
                 ],
                 'facebook' => [
                     '1' => [
-                        '@JLMelenchon',
+                        'JLMelenchon',
                     ],
                     '0.75' => [
-                        '@JLM2017',
+                        'JLM2017',
                     ],
                 ],
                 'youtube' => [
                     '1' => [
-                        'https://www.youtube.com/user/PlaceauPeuple/',
+                        'UCk-_PEY3iC6DIGJKuoEe9bw',
                     ],
                 ],
             ],
@@ -139,15 +146,15 @@
                 ],
                 'facebook' => [
                     '1' => [
-                        '@MarineLePen',
+                        'MarineLePen',
                     ],
                     '0.75' => [
-                        '@FN_officiel',
+                        'FN.officiel',
                     ],
                 ],
                 'youtube' => [
-                    '0.5' => [
-                        'https://www.youtube.com/channel/UClaa_CwoQEmSo9Mb_M1f91g',
+                    '0.6' => [
+                        'UClaa_CwoQEmSo9Mb_M1f91g',
                     ],
                 ],
             ],
@@ -185,15 +192,15 @@
                 ],
                 'facebook' => [
                     '1' => [
-                        '@EmmanuelMacron',
+                        'EmmanuelMacron',
                     ],
                     '0.75' => [
-                        '@EnMarche',
+                        'EnMarche',
                     ],
                 ],
                 'youtube' => [
                     '1' => [
-                        'https://www.youtube.com/channel/UCJw8np695wqWOaKVhFjkRyg',
+                        'UCJw8np695wqWOaKVhFjkRyg',
                     ],
                 ],
             ],
@@ -235,15 +242,15 @@
                 ],
                 'facebook' => [
                     '1' => [
-                        '@FrancoisFillon',
+                        'FrancoisFillon',
                     ],
                     '0.75' => [
-                        '@Fillon2017',
+                        'Fillon2017',
                     ],
                 ],
                 'youtube' => [
                     '1' => [
-                        'https://www.youtube.com/channel/UCp1R4BFJrKw34PfUc3GDLkw',
+                        'UCp1R4BFJrKw34PfUc3GDLkw',
                     ],
                 ],
             ],
@@ -282,15 +289,15 @@
                 ],
                 'facebook' => [
                     '1' => [
-                        '@hamonbenoit',
+                        'hamonbenoit',
                     ],
                     '0.75' => [
-                        '@avechamon',
+                        'avechamon',
                     ],
                 ],
                 'youtube' => [
                     '1' => [
-                        'https://www.youtube.com/channel/UCcMryUp6ME3BvP2alkS1dKg',
+                        'UCcMryUp6ME3BvP2alkS1dKg',
                     ],
                 ],
             ],

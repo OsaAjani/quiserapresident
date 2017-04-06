@@ -2,6 +2,7 @@
 namespace controllers\internals;
 
 use Sunra\PhpSimple\HtmlDomParser;
+use PHPInsight\Sentiment;
 
 class NewsBot extends \Controller
 {
@@ -48,8 +49,16 @@ class NewsBot extends \Controller
                     $dateArticle = \DateTime::createfromformat('Y-m-d\TH:i:sP', $news->updated);
                     if($dateArticle->format("Ymd") > $lastAnalyseDate->format('Ymd')) {
                         $content = $this->getNewsContent($news->link[0]["href"], $media);
+
+                        if (!$content) {
+                            continue;
+                        }
+
+                        $article = array("title" => $news->title, "content" => $content, "media" => $media);
+                        $this->processingNews($article);
                     }
                 }
+
                 continue;
             }
 
@@ -59,6 +68,13 @@ class NewsBot extends \Controller
     			$dateArticle = \DateTime::createfromformat("D, d M Y H:i:s P", $news->pubDate);
     			if($dateArticle->format("Ymd") > $lastAnalyseDate->format('Ymd')) {
     				$content = $this->getNewsContent($news->link, $media);
+                    
+                    if (!$content) {
+                        continue;
+                    }
+
+                    $article = array("title" => $news->title, "content" => $content, "media" => $media);
+                    $this->processingNews($article);
     			}
     		}
     	}
@@ -69,7 +85,7 @@ class NewsBot extends \Controller
     * @param $news object news from rss
     * @param $media String media
     */
-    public function getNewsContent($url, $media)
+    private function getNewsContent($url, $media)
     {
         //get HTML content of news
         $ch = curl_init($url);
@@ -107,6 +123,63 @@ class NewsBot extends \Controller
         //remove balise html from content
         $content = strip_tags($content);
         return $content;
+    }
+
+    /**
+     * This function processing the news to analyse this quality, sentiment, etc.
+     * @param array $news : The news to process array with title and content
+     */
+    private function processingNews($news)
+    {
+        global $candidats;
+
+        //Searching who the title of news is about
+        $whoIsAbout = TextAnalysis::whoIsAbout($candidats, $news['title']);
+
+        //If we dont know, we search on content
+        if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
+        {
+            $whoIsAbout = TextAnalysis::whoIsAbout($candidats, $news['content']);
+
+            //if we dont know, we dont care
+            if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
+            {
+                return false;
+            }
+        }
+
+        reset($whoIsAbout);
+
+        //Analysing news sentiment
+        $sentimentAnalyser = new Sentiment(false, 'fr');
+
+        $sentimentScoreTitle = $sentimentAnalyser->score($news['title']);
+        $mainSentimentTitle = $sentimentAnalyser->categorise($news['title']);
+
+        $sentimentScoreContent = $sentimentAnalyser->score($news['content']);
+        $mainSentimentContent = $sentimentAnalyser->categorise($news['content']);
+
+        $now = new \DateTime();
+        $now = $now->format('Y-m-d H:i:s');
+
+        //Create news array to insert
+        $newsToInsert = [
+            'candidat' => key($whoIsAbout),
+            'media' => $news["media"],
+            'title' => $news["title"],
+            'content' => $news["content"],
+            'main_sentiment_title' => $mainSentimentTitle,
+            'main_sentiment_value_title' => $sentimentScoreTitle[$mainSentimentTitle],
+            'sentiments_value_title' => serialize($sentimentScoreTitle),
+            'main_sentiment_content' => $mainSentimentContent,
+            'main_sentiment_value_content' => $sentimentScoreContent[$mainSentimentContent],
+            'sentiments_value_content' => serialize($sentimentScoreContent),
+            'at' => $now,
+        ];
+
+        global $bdd;
+        $model = new \Model($bdd);
+        return $model->insertIntoTable('news', $newsToInsert);
     }
 
 }

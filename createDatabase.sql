@@ -40,9 +40,12 @@ CREATE TABLE IF NOT EXISTS news
     media VARCHAR(100) NOT NULL,
     title VARCHAR(100) NOT NULL,
     content VARCHAR(100000) NOT NULL,
-    main_sentiment VARCHAR(100) NOT NULL,
-    main_sentiment_value FLOAT(4,2) NOT NULL,
-    sentiments_value VARCHAR(30) NOT NULL,
+    main_sentiment_title VARCHAR(100) NOT NULL,
+    main_sentiment_value_title FLOAT(4,2) NOT NULL,
+    sentiments_value_title VARCHAR(30) NOT NULL,
+    main_sentiment_content VARCHAR(100) NOT NULL,
+    main_sentiment_value_content FLOAT(4,2) NOT NULL,
+    sentiments_value_content VARCHAR(30) NOT NULL,
     at DATETIME NOT NULL,
     PRIMARY KEY (id)
 );

@@ -139,13 +139,7 @@ class NewsBot extends \Controller
         //If we dont know, we search on content
         if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
         {
-            $whoIsAbout = TextAnalysis::whoIsAbout($candidats, $news['content']);
-
-            //if we dont know, we dont care
-            if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
-            {
-                return false;
-            }
+            return false;
         }
 
         reset($whoIsAbout);

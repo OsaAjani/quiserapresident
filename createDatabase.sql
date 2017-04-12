@@ -5,7 +5,7 @@ use quiserapresident_fr;
 CREATE TABLE IF NOT EXISTS tweet
 (
     id INT NOT NULL AUTO_INCREMENT,
-    id_tweet INT(11) NOT NULL,
+    id_tweet VARCHAR(20) NOT NULL,
     content VARCHAR(500) NOT NULL,
     nb_like INT(11) NOT NULL,
     nb_view INT(11) NOT NULL,

@@ -60,7 +60,7 @@ class TwitterBot extends \Controller
             'content' => isset($tweet['extended_tweet']['full_text']) ? $tweet['extended_tweet']['full_text'] : $tweet['text'],
             'user' => $tweet['user'],
             'timestamp' => $tweet['timestamp_ms'],
-            'is_response' => $tweet['is_quote_status'],
+            'is_response' => ($tweet['is_quote_status'] || !empty($tweet['in_reply_to_status_id'])),
             'is_retweet' => isset($tweet['retweeted_status']),
             'lang' => $tweet['lang'],
         ];

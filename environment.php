@@ -114,6 +114,7 @@
             'keywords' => [
                 '1' => [
                     'Lepen',
+                    'Le Pen',
                     'Marine Lepen',
                     'Marine Le Pen',
                     'MLP',

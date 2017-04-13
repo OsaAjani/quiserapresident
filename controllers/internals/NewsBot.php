@@ -132,17 +132,22 @@ class NewsBot extends \Controller
     private function processingNews($news)
     {
         global $candidats;
+        
+        echo "Analyse news : " . $news['title'] . "...\n";
 
         //Searching who the title of news is about
         $whoIsAbout = TextAnalysis::whoIsAbout($candidats, $news['title']);
-
+        
         //If we dont know, we search on content
         if ($whoIsAbout[array_keys($whoIsAbout)[0]] == 0 || ($whoIsAbout[array_keys($whoIsAbout)[0]] == $whoIsAbout[array_keys($whoIsAbout)[1]]))
         {
+            echo "    Fail, title is for nobody...\n";
             return false;
         }
 
         reset($whoIsAbout);
+
+        echo "    News is about " . key($whoIsAbout) . "\n";
 
         //Analysing news sentiment
         $sentimentAnalyser = new Sentiment(false, 'fr');
@@ -153,6 +158,7 @@ class NewsBot extends \Controller
         $sentimentScoreContent = $sentimentAnalyser->score($news['content']);
         $mainSentimentContent = $sentimentAnalyser->categorise($news['content']);
 
+        echo "    Try insert news\n";
         $now = new \DateTime();
         $now = $now->format('Y-m-d H:i:s');
 
@@ -171,9 +177,11 @@ class NewsBot extends \Controller
             'at' => $now,
         ];
 
+        echo "...End news processing\n";
+
         global $bdd;
         $model = new \Model($bdd);
         return $model->insertIntoTable('news', $newsToInsert);
-    }
 
+    }
 }

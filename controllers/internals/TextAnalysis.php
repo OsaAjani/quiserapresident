@@ -33,8 +33,18 @@ class TextAnalysis extends \Controller
                 //Search the number of occurence for each of thoses keywords in the text, and add the number * the coef to the count for this people
                 foreach ($keywords as $keyword)
                 {
+                    //Sanitize keyword
                     $keyword = mb_strtolower(self::removeAccent($keyword));
-                    $keywordCount = mb_substr_count($text, ' ' . $keyword) * floatval($coef) + mb_substr_count($text, $keyword . ' ') * floatval($coef);
+                    $keyword = preg_quote($keyword, '#');
+
+                    //Generate regex on run it
+                    $matches = [];
+                    $regex = '#(^' . $keyword . '[ ,.:;]|[ ,.:;]' . $keyword . '[ ,.:;]|[ ,.:;]' . $keyword . '$)#u';
+                    preg_match_all($regex, $text, $matches);
+
+                    //Count result
+                    $keywordCount = count($matches[0]) * floatval($coef);
+
                     $peoplesCount[$peopleKey] += $keywordCount;
                     $totalCount += $keywordCount;
                 }

@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS tweet
     author_nb_followers INT(11) NOT NULL,
     author_is_politic BOOLEAN NOT NULL,
     candidat VARCHAR(100) NOT NULL,
-    main_sentiment VARCHAR(255),
+    main_sentiment VARCHAR(10),
     main_sentiment_value FLOAT(4,2),
-    sentiments_value VARCHAR(30) NOT NULL,
+    sentiments_value VARCHAR(1000) NOT NULL,
     last_update DATETIME NOT NULL,
     at DATETIME NOT NULL,
     PRIMARY KEY (id)
@@ -40,12 +40,12 @@ CREATE TABLE IF NOT EXISTS news
     media VARCHAR(100) NOT NULL,
     title VARCHAR(100) NOT NULL,
     content VARCHAR(100000) NOT NULL,
-    main_sentiment_title VARCHAR(100) NOT NULL,
+    main_sentiment_title VARCHAR(10) NOT NULL,
     main_sentiment_value_title FLOAT(4,2) NOT NULL,
-    sentiments_value_title VARCHAR(30) NOT NULL,
-    main_sentiment_content VARCHAR(100) NOT NULL,
+    sentiments_value_title VARCHAR(1000) NOT NULL,
+    main_sentiment_content VARCHAR(10) NOT NULL,
     main_sentiment_value_content FLOAT(4,2) NOT NULL,
-    sentiments_value_content VARCHAR(30) NOT NULL,
+    sentiments_value_content VARCHAR(1000) NOT NULL,
     at DATETIME NOT NULL,
     PRIMARY KEY (id)
 );

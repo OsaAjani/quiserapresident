@@ -61,6 +61,7 @@
 
     $candidats = [
         'melenchon' => [
+            'name' => 'melenchon',
             'real_name' => "Jean-Luc Mélenchon",
             'keywords' => [
                 '1' => [
@@ -110,6 +111,7 @@
         ],
 
         'le pen' => [
+            'name' => 'le pen',
             'real_name' => "Marine Le Pen",
             'keywords' => [
                 '1' => [
@@ -162,6 +164,7 @@
         ],
 
         'macron' => [
+            'name' => 'macron',
             'real_name' => "Emmanuel Macron",
             'keywords' => [
                 '1' => [
@@ -208,6 +211,7 @@
         ],
         
         'fillon' => [
+            'name' => 'fillon',
             'real_name' => "François Fillon",
             'keywords' => [
                 '1' => [
@@ -258,6 +262,7 @@
         ],
         
         'hamon' => [
+            'name' => 'hamon',
             'real_name' => 'Benoît Hamon',
             'keywords' => [
                 '1' => [

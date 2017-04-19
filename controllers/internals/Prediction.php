@@ -6,14 +6,17 @@ class Prediction extends \Controller
     //Const for score calculation
     
     //news
+    const NEWS_DEFAULT_SCORE = 100;
     const NEWS_VISIBILITY = 15000000;
     const NEWS_CONFIDENCE = 0.55;
 
     //tweets
+    const TWEET_DEFAULT_SCORE = 100;
     const TWEET_VISIBILITY = 5000000;
     const TWEET_CONFIDENCE = 0.3;
 
     //Community
+    const COMMUNITY_DEFAULT_SCORE = 100;
     const COMMUNITY_PERCENT_COEF = 0.1;
 
     /**
@@ -31,15 +34,19 @@ class Prediction extends \Controller
 
         foreach ($candidats as $candidat)
         {
-            $candidatScore = $this->calculateCandidatScoreBetweenDates($candidat, $todayBeginning, $todayEnd);
+            $candidatScores = $this->calculateCandidatScoresBetweenDates($candidat, $todayBeginning, $todayEnd);
 
             $prediction = [
                 'candidat' => $candidat['name'],
-                'score' => $candidatScore,
+                'score' => $candidatScores['score'],
+                'tweet_score' => $candidatScores['tweet_score'],
+                'news_score' => $candidatScores['news_score'],
+                'survey_score' => $candidatScores['survey_score'],
+                'community_score' => $candidatScores['community_score'],
                 'at' => $now->format('Y-m-d H:i:s'),
             ];
 
-            echo $candidat['real_name'] . " : " . $candidatScore . "\n";
+            echo $candidat['real_name'] . " : " . $candidatScores['score'] . "\n";
             continue;
 
             $isInsertSuccess = $this->insertPrediction($prediction);
@@ -68,15 +75,15 @@ class Prediction extends \Controller
     }
 
     /**
-     * This function calculate score of a candidat between two dates
+     * This function calculate all scores of a candidat between two dates
      */
-    public function calculateCandidatScoreBetweenDates($candidat, \DateTime $startDate, \DateTime $endDate)
+    public function calculateCandidatScoresBetweenDates($candidat, \DateTime $startDate, \DateTime $endDate)
     {
         $predictionTweet = new PredictionTweet();
-        $tweetsScore = $predictionTweet->calculateAllTweetsScoreForCandidatBetweenDates($candidat, $startDate, $endDate);
-        
+        $tweetsScore = $predictionTweet->calculateCandidatScoreBetweenDatesAsPercent($candidat, $startDate, $endDate);
+
         $predictionNews = new PredictionNews();
-        $newsScore = $predictionNews->calculateAllNewsScoreForCandidatBetweenDates($candidat, $startDate, $endDate);
+        $newsScore = $predictionNews->calculateCandidatNewsScoreBetweenDatesAsPercent($candidat, $startDate, $endDate);
 
         $predictionCommunity = new PredictionCommunity();
         $meanCommunityScoreAsPercent = $predictionCommunity->calculateMeanCandidatCommunityAsPercentBetweenTwoDate($candidat, $startDate, $endDate);
@@ -84,12 +91,27 @@ class Prediction extends \Controller
         $predictionSurvey = new PredictionSurvey();
         $meanSurveyScore = $predictionSurvey->calculateMeanCandidatSurveyScoreAsPercentBetweenTwoDate($candidat, $startDate, $endDate);
 
-        $candidatScore = ($tweetsScore * (self::TWEET_VISIBILITY / self::NEWS_VISIBILITY) * (1 + self::TWEET_CONFIDENCE)) + ($newsScore * (1 + self::NEWS_CONFIDENCE));
+        $candidatScore = 0;
+
+        //Tweets implication
+        $candidatScore += self::TWEET_DEFAULT_SCORE * (1 + $tweetsScore) * self::TWEET_CONFIDENCE * (self::TWEET_VISIBILITY / self::NEWS_VISIBILITY);
+
+        //News implication
+        $candidatScore += self::NEWS_DEFAULT_SCORE * (1 + $newsScore) * self::NEWS_CONFIDENCE;
+
+        //Community implication
         $candidatScore *= 1 + ($meanCommunityScoreAsPercent * self::COMMUNITY_PERCENT_COEF);
 
+        //Official surveys implication
         $candidatScore *= 1 + $meanSurveyScore;
 
-        return $candidatScore;
+        return [
+            'score' => $candidatScore,
+            'tweet_score' => $tweetsScore,
+            'news_score' => $newsScore,
+            'survey_score' => $meanSurveyScore,
+            'community_score' => $meanCommunityScoreAsPercent,
+        ];
     }
 
 }

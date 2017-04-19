@@ -8,17 +8,52 @@ class PredictionNews extends \Controller
     //titles score
     const NEWS_SCORE_COEF_TITLE = 5;
     const NEWS_SCORE_COEF_MAIN_SENTIMENT_TITLE_POS = 1;
-    const NEWS_SCORE_COEF_MAIN_SENTIMENT_TITLE_NEG = -1;
+    const NEWS_SCORE_COEF_MAIN_SENTIMENT_TITLE_NEG = 0;
     const NEWS_SCORE_COEF_MAIN_SENTIMENT_TITLE_NEU = 0.2;
 
     //content score
     const NEWS_SCORE_COEF_CONTENT = 1;
     const NEWS_SCORE_COEF_MAIN_SENTIMENT_CONTENT_POS = 1;
-    const NEWS_SCORE_COEF_MAIN_SENTIMENT_CONTENT_NEG = -1;
+    const NEWS_SCORE_COEF_MAIN_SENTIMENT_CONTENT_NEG = 0;
     const NEWS_SCORE_COEF_MAIN_SENTIMENT_CONTENT_NEU = 0.2;
+    
+    /**
+     * This function return the news score of a candidat as a percentage (for use in total score calculation algorithm, not a real percentage of candidat score actually)
+     */
+    public function calculateCandidatNewsScoreBetweenDatesAsPercent ($candidat, \DateTime $startDate, \DateTime $endDate)
+    {
+        $candidatScore = $this->calculateAllNewsScoreForCandidatBetweenDates($candidat, $startDate, $endDate);
+        $totalScore = $this->calculateTotalNewsScoreBetweenDates($startDate, $endDate);
+
+        $news = $this->getAllNewsForCandidatBetweenDates($candidat, $startDate, $endDate);
+        $negativesNews = $this->getAllNegativesNewsForCandidatBetweenDates($candidat, $startDate, $endDate);
+        $negativesNewsPercent = count($negativesNews) / count($news);
+
+        $candidatScore = $candidatScore * (1 - $negativesNewsPercent); //For balancing $candidat score when too much negativ news
+        
+        $candidatScoreAsPercent = $candidatScore / $totalScore;
+
+        return $candidatScoreAsPercent; 
+    }
+    /**
+     * This function calculate total news score for all candidats between two date
+     */
+    public function calculateTotalNewsScoreBetweenDates (\DateTime $startDate, \DateTime $endDate)
+    {
+        global $candidats;
+
+        $totalScore = 0;
+
+        foreach ($candidats as $candidat)
+        {
+            $totalScore += $this->calculateAllNewsScoreForCandidatBetweenDates ($candidat, $startDate, $endDate);
+        }
+
+        return $totalScore;
+    }
 
     /**
-     * This function calculate total score of all News beetwen two date and calculate score
+     * This function calculate total score of all News for a candidat beetwen two date and calculate score
      */
     public function calculateAllNewsScoreForCandidatBetweenDates ($candidat, \DateTime $startDate, \DateTime $endDate)
     {
@@ -40,6 +75,16 @@ class PredictionNews extends \Controller
         global $bdd;
         $model = new \Model($bdd);
         return $model->getFromTableWhere('news', ['>=at' => $startDate->format('Y-m-d H:i:s'), '<=at' => $endDate->format('Y-m-d H:i:s'), 'candidat' => $candidat['name']]);
+    }
+
+    /**
+     * This function return all negatives news for a candidat between two date
+     */
+    public function getAllNegativesNewsForCandidatBetweenDates ($candidat, \DateTime $startDate, \DateTime $endDate)
+    {
+        global $bdd;
+        $model = new \Model($bdd);
+        return $model->getFromTableWhere('news', ['>=at' => $startDate->format('Y-m-d H:i:s'), '<=at' => $endDate->format('Y-m-d H:i:s'), 'candidat' => $candidat['name'], 'main_sentiment_title' => 'neg']);
     }
 
     /**

@@ -65,6 +65,10 @@ CREATE TABLE IF NOT EXISTS prediction
     id INT NOT NULL AUTO_INCREMENT,
     candidat VARCHAR(100) NOT NULL,
     score FLOAT(5,2) NOT NULL,
+    tweet_score INT NOT NULL,
+    news_score INT NOT NULL,
+    survey_score FLOAT(5,2) NOT NULL,
+    community_score FLOAT(7,4) NOT NULL,
     at DATETIME NOT NULL,
     PRIMARY KEY (id)
 );

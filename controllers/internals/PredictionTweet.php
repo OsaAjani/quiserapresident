@@ -24,7 +24,7 @@ class PredictionTweet extends \Controller
 
         $candidatScore = $candidatScore * (1 - $negativesTweetsPercent); //For balancing $candidat score when too much negativ tweets
         
-        $candidatScoreAsPercent = $candidatScore / $totalScore;
+        $candidatScoreAsPercent = $candidatScore / ($totalScore + 1);
 
         return $candidatScoreAsPercent; 
     }

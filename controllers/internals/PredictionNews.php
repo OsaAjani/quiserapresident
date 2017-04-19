@@ -27,7 +27,7 @@ class PredictionNews extends \Controller
 
         $news = $this->getAllNewsForCandidatBetweenDates($candidat, $startDate, $endDate);
         $negativesNews = $this->getAllNegativesNewsForCandidatBetweenDates($candidat, $startDate, $endDate);
-        $negativesNewsPercent = count($negativesNews) / count($news);
+        $negativesNewsPercent = count($negativesNews) / (count($news) + 1);
 
         $candidatScore = $candidatScore * (1 - $negativesNewsPercent); //For balancing $candidat score when too much negativ news
         
